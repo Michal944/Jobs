@@ -6,11 +6,9 @@ pipeline {
             steps {
                 
                 echo 'Preparing tools...'
-                sh "su root"
-                sh "apt-get install git -y"
-                sh "apt-get install python3 python -y"
-                sh "apt-get install curl -y"
-                sh "python3 -m pip -V"
+                sh "git clone https://github.com/kubernetes-sigs/kubespray.git"
+                sh "cd kubespray" 
+                sh "pip install -r requirements.txt"
             
             }
         }
