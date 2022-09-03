@@ -1,0 +1,31 @@
+all:
+  hosts:
+    controlplane:
+      ansible_host: 172.168.8.1
+      ip: 172.168.8.1
+      access_ip: 172.168.8.1
+    node1:
+      ansible_host: 172.168.8.2
+      ip: 172.168.8.2
+      access_ip: 172.168.8.2
+    node2:
+      ansible_host: 172.168.8.3
+      ip: 172.168.8.3
+      access_ip: 172.168.8.3
+  children:
+    kube_control_plane:
+      hosts:
+        controlplane:
+    kube_node:
+      hosts:
+        node1:
+        node2:
+    etcd:
+      hosts:
+        controlplane:
+    k8s_cluster:
+      children:
+        kube_control_plane:
+        kube_node:
+    calico_rr:
+      hosts: {}
