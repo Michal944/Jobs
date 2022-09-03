@@ -6,6 +6,7 @@ pipeline {
             steps {
                 
                 echo 'Preparing tools...'
+                sh "su root"
                 sh "apt-get install git -y"
                 sh "apt-get install python3 python -y"
                 sh "apt-get install curl -y"
