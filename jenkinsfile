@@ -20,7 +20,7 @@ pipeline {
                 echo 'Build...'
                 sh "cp -rfp ${KUBESPRAY_DIR}/inventory/sample ${KUBESPRAY_DIR}/inventory/mycluster"
             //    sh 'declare -a IPS=(172.168.8.1 172.168.8.2 172.168.8.3)'
-             //   sh 'CONFIG_FILE=kubespray/inventory/mycluster/hosts.yaml python3 kubespray/contrib/inventory_builder/inventory.py ${IPS[@]}'
+                sh 'CONFIG_FILE=kubespray/inventory/mycluster/hosts.yaml python3 kubespray/contrib/inventory_builder/inventory.py 172.168.8.1 172.168.8.2 172.168.8.3'
                 sh "curl https://raw.githubusercontent.com/Michal944/Jobs/master/hosts.yaml -o ${KUBESPRAY_DIR}/inventory/mycluster/hosts.yaml"
                 sh "cat ${KUBESPRAY_DIR}/inventory/mycluster/hosts.yaml"
             }
