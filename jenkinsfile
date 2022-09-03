@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Prepare Tools') {
+            steps {
+                
+                echo 'Preparing tools...'
+                sh "apt-get install git -y"
+                sh "apt-get install python3 python -y"
+                sh "apt-get install curl -y"
+                sh "python3 -m pip -V"
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Build...'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
+            }
+        }
+    }
+}
