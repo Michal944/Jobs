@@ -1,5 +1,5 @@
 pipeline {
-    agent develop
+    agent {"develop"}
     environment{
         KUBESPRAY_DIR= "kubespray"
     }
