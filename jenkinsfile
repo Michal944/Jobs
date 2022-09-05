@@ -1,8 +1,11 @@
 pipeline {
     agent { 
         node {
-        label 'develop' 
+        label params.Node
         }
+    }
+    parameters{
+        choice(name: "Node", choices: ["master", "develop"], description: "Node to be used for the building and deploying")
     }
     environment{
         KUBESPRAY_DIR= "kubespray"
