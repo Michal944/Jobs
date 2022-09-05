@@ -3,6 +3,7 @@ pipeline {
         node {
         label 'develop' 
         }
+    }
     environment{
         KUBESPRAY_DIR= "kubespray"
     }
