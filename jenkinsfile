@@ -5,6 +5,7 @@ pipeline {
     }
 
     stages {
+        nodes("develop"){
         stage('Prepare Tools') {
             steps {
                 
@@ -29,6 +30,7 @@ pipeline {
             steps {
                 echo 'Deploying....'
             }
+        }
         }
     }
     post {
