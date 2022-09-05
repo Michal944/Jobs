@@ -5,6 +5,7 @@ pipeline {
     }
 
     stages {
+        
         nodes("develop"){
         stage('Prepare Tools') {
             steps {
