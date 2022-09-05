@@ -1,12 +1,10 @@
 pipeline {
-    agent any
+    agent develop
     environment{
         KUBESPRAY_DIR= "kubespray"
     }
 
-    stages {
-        
-        nodes("develop"){
+    stages {        
         stage('Prepare Tools') {
             steps {
                 
@@ -31,7 +29,6 @@ pipeline {
             steps {
                 echo 'Deploying....'
             }
-        }
         }
     }
     post {
