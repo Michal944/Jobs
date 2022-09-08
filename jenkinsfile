@@ -10,9 +10,9 @@ pipeline {
     environment{
         KUBESPRAY_DIR= "kubespray"
         PATHKEY= "/root/.ssh/id_rsa"
-        MASTERNODE="root@172.168.8.1"
-        N1="root@172.168.8.2"
-        N2="root@172.168.8.3"
+        MASTERNODE="72.168.8.1"
+        N1="172.168.8.2"
+        N2="172.168.8.3"
     }
 
     stages {        
