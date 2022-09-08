@@ -36,18 +36,20 @@ pipeline {
             }
         }
         stage('Connect to Remote hosts') {
-            echo "Connect to Remote hosts"
-            sh "apt-get update && sudo apt-get install openssh-client -y"
-            sh "apt-get install sshpass -y"
-            sh "ssh-keygen -t rsa -f ${PATHKEY} -q -P """
-            withCredentials([
-                usernamePassword(credentails: "k8snodes", usernameVariable: USER, passwordVariable: PASSWORD)
-            ]){
-                sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${MASTERNODE}"
-                sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${N1}"
-                sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${N2}"
-
+            steps {
+                echo "Connect to Remote hosts"
+                sh "apt-get update && sudo apt-get install openssh-client -y"
+                sh "apt-get install sshpass -y"
+                sh "ssh-keygen -t rsa -f ${PATHKEY} -q -P """
+                withCredentials([
+                    usernamePassword(credentails: "k8snodes", usernameVariable: USER, passwordVariable: PASSWORD)
+                ]){
+                    sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${MASTERNODE}"
+                    sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${N1}"
+                    sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${N2}"
+                }
             }
+            
             
        
         }
