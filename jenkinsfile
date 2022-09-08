@@ -42,7 +42,7 @@ pipeline {
                 sh "apt-get install sshpass -y"
                 sh "ssh-keygen -t rsa -f ${PATHKEY} -q -P \'\' "
                 withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                
-                    sh "sshpass -p ${PASSWORD} ssh ${USER}@${MASTERNODE} ls /"
+                    sh "ping ${MASTERNODE}"
                     //sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${MASTERNODE}"
                     //sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${N1}"
                     //sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${N2}"
