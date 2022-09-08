@@ -40,7 +40,7 @@ pipeline {
                 echo "Connect to Remote hosts"
                 sh "apt-get update && sudo apt-get install openssh-client -y"
                 sh "apt-get install sshpass -y"
-                sh "ssh-keygen -t rsa -f ${PATHKEY} -q -P \"\" "
+                sh "ssh-keygen -t rsa -f ${PATHKEY} -q -P \'\' "
                 withCredentials([usernamePassword(credentailsId: "k8snodes", usernameVariable: USER, passwordVariable: PASSWORD)]){
                     echo "${PASSWORD} ${USER}"
                     
