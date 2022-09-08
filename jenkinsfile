@@ -63,6 +63,7 @@ pipeline {
     post {
         always {
             cleanWs()
+            sh " rm -f ${PATHKEY}"
         }
     }
 }
