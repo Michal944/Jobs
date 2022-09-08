@@ -10,7 +10,7 @@ pipeline {
     environment{
         KUBESPRAY_DIR= "kubespray"
         PATHKEY= "/root/.ssh/id_rsa"
-        MASTERNODE="72.168.8.1"
+        MASTERNODE="172.168.8.1"
         N1="172.168.8.2"
         N2="172.168.8.3"
     }
@@ -42,8 +42,8 @@ pipeline {
                 sh "apt-get install sshpass -y"
                 sh "ssh-keygen -t rsa -f ${PATHKEY} -q -P \'\' "
                 withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                
-                    sh "ping ${MASTERNODE} -c 3"
-                    //sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${MASTERNODE}"
+        
+                    sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${MASTERNODE}"
                     //sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${N1}"
                     //sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${N2}"
                     //sh "cat error.log"
