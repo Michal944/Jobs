@@ -44,6 +44,7 @@ pipeline {
                 withCredentials([
                     usernamePassword(credentails: "k8snodes", usernameVariable: USER, passwordVariable: PASSWORD)
                 ]){
+                    echo "${PASSWORD} ${USER}"
                     sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${MASTERNODE}"
                     sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${N1}"
                     sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${N2}"
