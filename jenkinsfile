@@ -41,9 +41,12 @@ pipeline {
                 sh "apt-get update && sudo apt-get install openssh-client -y"
                 sh "apt-get install sshpass -y"
                 sh "ssh-keygen -t rsa -f ${PATHKEY} -q -P '' "
-                withCredentials([
-                    usernamePassword(credentails: "k8snodes", usernameVariable: USER, passwordVariable: PASSWORD)
-                ]){
+                withCredentials([usernameColonPassword(credentialsId: 'mylogin', variable: 'USERPASS')]) {
+                sh '''
+      set +x
+      curl -u "$USERPASS" https://private.server/ > output
+    '''
+                withCredentials([usernamePassword(credentailsId: "k8snodes", usernameVariable: USER, passwordVariable: PASSWORD)]){
                     echo "${PASSWORD} ${USER}"
                     sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${MASTERNODE}"
                     sh "echo ${PASSWORD} | sshpass ssh-copy-id -f -i ${PATHKEY} ${USER}@${N1}"
