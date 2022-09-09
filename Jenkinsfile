@@ -68,7 +68,6 @@ pipeline {
                 }
                 sh "sed -i \'s/127.0.0.1/${MASTERNODE}\' ${KUBECTL_CFG}"
                 sh "./kubectl --kubeconfig=\"${KUBECTL_CFG}\" get nodes -o wide"
-                cleanWs()
             }
         }
     }
