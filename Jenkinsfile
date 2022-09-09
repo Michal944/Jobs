@@ -69,7 +69,6 @@ pipeline {
             withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                        
                     sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no ${USER}@${MASTERNODE}:/root/.kube/config ${KUBECTL_CONFIG_FILE}"              
                 }
-<<<<<<< HEAD
             sh "sed -i \"s/127.0.0.1/${MASTERNODE}/\" ${KUBECTL_CONFIG_FILE}"
             sh "./kubectl --kubeconfig=\"${KUBECTL_CONFIG_FILE}\" get nodes -o wide"
             }
@@ -78,11 +77,6 @@ pipeline {
     post {
         always {
             sh " rm -f ${PATHKEY} ${PATHKEY}.pub"
-=======
-            sh "sed -i \"s+https://127.0.0.1+cp.k8s\" config.yaml"
-            sh "./kubectl --kubeconfig=\"config.yaml\" get nodes -o wide"
-            cleanWs()
->>>>>>> 52f396fcffb75c4d3d3cf5cee364df042eaccbec
         }
     }
 }
