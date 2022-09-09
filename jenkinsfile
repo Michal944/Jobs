@@ -45,9 +45,11 @@ pipeline {
                 sh "chown coder.coder /tmp/authorized_keys"
                 withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                
         
-                    sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no /tmp/authorized_keys ${USER}@${MASTERNODE}:/root/.ssh/"
-                    //sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${N1}"
-                    //sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${N2}"
+                    //sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no /tmp/authorized_keys ${USER}@${MASTERNODE}:/root/.ssh/"
+
+                    sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${MASTERNODE}"
+                    sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${N1}"
+                    sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${N2}"
                     //sh "cat error.log"
                     
                 }
