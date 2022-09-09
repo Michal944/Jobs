@@ -74,7 +74,7 @@ pipeline {
                     sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no ${USER}@${MASTERNODE}:/root/.kube/config ./config.yaml"
                
                 }
-            sh "sed -i \"s+https://127.0.0.1+cp.k8s\" -i config.yaml"
+            sh "sed -i \"s+https://127.0.0.1+cp.k8s\" config.yaml"
             sh "./kubectl --kubeconfig=\"config.yaml\" get nodes -o wide"
             cleanWs()
         }
