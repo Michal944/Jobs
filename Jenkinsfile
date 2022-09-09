@@ -56,11 +56,11 @@ pipeline {
         }
         stage('Deploy') {
             when { 
-                expression { shouldDeploy == true }
+                expression { params.shouldDeploy == true }
             }
             steps {
                 echo '--------------Deploying....--------------'
-                sh "ansible-playbook -i kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root kubespray/cluster.yml"
+                //sh "ansible-playbook -i kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root kubespray/cluster.yml"
             }
         }
         stage('Test integration'){
