@@ -15,6 +15,7 @@ pipeline {
         N2="172.168.8.3"
         //docker or containerd
         CONTAINER_MANAGER = "docker"
+        KUBECTL_VERSION = "v1.25.0"
     }
 
     stages {        
@@ -66,5 +67,17 @@ pipeline {
             cleanWs()
             sh " rm -f ${PATHKEY} ${PATHKEY}.pub"
         }
+        succes {
+            sh "curl -LO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+            sh "chmod +x ./kubectl"
+            withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                        
+                    sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no ${USER}@${MASTERNODE}:/root/.kube/config ./config.yaml"
+               
+                }
+            sh "sed -i \"s+https://127.0.0.1+cp.k8s\" -i config.yaml"
+            sh "./kubectl --kubeconfig=\"config.yaml\" get nodes -o wide"
+"
+        }
+
     }
 }
