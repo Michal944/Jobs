@@ -62,7 +62,7 @@ pipeline {
     post {
         always {
             cleanWs()
-            sh " rm -f ${PATHKEY}"
+            sh " rm -f ${PATHKEY} ${PATHKEY}.pub"
         }
     }
 }
