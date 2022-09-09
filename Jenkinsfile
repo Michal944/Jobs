@@ -6,6 +6,7 @@ pipeline {
     }
     parameters{
         choice(name: "Node", choices: ["master", "develop"], description: "Node to be used for the building and deploying")
+        booleanParam(name: "shouldDeploy", defaultValue: true, description: "Should deploy kubernetes?")
     }
     environment{
         KUBESPRAY_DIR= "kubespray"
@@ -54,9 +55,12 @@ pipeline {
             }      
         }
         stage('Deploy') {
+            when { 
+                expression { shouldDeploy == true }
+            }
             steps {
                 echo '--------------Deploying....--------------'
-               // sh "ansible-playbook -i kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root kubespray/cluster.yml"
+                sh "ansible-playbook -i kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root kubespray/cluster.yml"
             }
         }
         stage('Test integration'){
