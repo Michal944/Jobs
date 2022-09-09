@@ -16,12 +16,13 @@ pipeline {
         //docker or containerd
         CONTAINER_MANAGER = "docker"
         KUBECTL_VERSION = "v1.25.0"
+        KUBECTL_CONFIG_FILE = "config.yaml"
     }
 
     stages {        
         stage('Prepare Tools') {
             steps {
-                
+                cleanWs()
                 echo '--------------Preparing tools...--------------'
                 sh "apt-get install python3 python3-pip -y"
                 sh "git clone https://github.com/kubernetes-sigs/kubespray.git"
@@ -61,23 +62,21 @@ pipeline {
                 sh "ansible-playbook -i kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root kubespray/cluster.yml"
             }
         }
-    }
-    post {
-        always {
-            cleanWs()
-            sh " rm -f ${PATHKEY} ${PATHKEY}.pub"
-        }
-        succes {
+        stage('Integration Test'){
+            steps {
             sh "curl -LO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
             sh "chmod +x ./kubectl"
             withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                        
-                    sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no ${USER}@${MASTERNODE}:/root/.kube/config ./config.yaml"
-               
+                    sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no ${USER}@${MASTERNODE}:/root/.kube/config ${KUBECTL_CONFIG_FILE}"              
                 }
-            sh "sed -i \"s+https://127.0.0.1+cp.k8s\" -i config.yaml"
-            sh "./kubectl --kubeconfig=\"config.yaml\" get nodes -o wide"
-            cleanWs()
+            sh "sed -i \"s/127.0.0.1/${MASTERNODE}/\" ${KUBECTL_CONFIG_FILE}"
+            sh "./kubectl --kubeconfig=\"${KUBECTL_CONFIG_FILE}\" get nodes -o wide"
+            }
         }
-
+    }
+    post {
+        always {
+            sh " rm -f ${PATHKEY} ${PATHKEY}.pub"
+        }
     }
 }
