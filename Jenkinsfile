@@ -35,7 +35,7 @@ pipeline {
                 sh "CONFIG_FILE=kubespray/inventory/mycluster/hosts.yaml python3 kubespray/contrib/inventory_builder/inventory.py ${MASTERNODE} ${N1} ${N2}"
                 sh "curl https://raw.githubusercontent.com/Michal944/Jobs/master/hosts.yaml -o ${KUBESPRAY_DIR}/inventory/mycluster/hosts.yaml"
                 sh "cat ${KUBESPRAY_DIR}/inventory/mycluster/hosts.yaml"
-                sh "sed -i -e \'/container_manager:/s/containerd/${CONTAINER_MANAGER}/\' inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml"
+                sh "sed -i -e \'/container_manager:/s/containerd/${CONTAINER_MANAGER}/\' kubespray/inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml"
             }
         }
         stage('Authorized keys') {
