@@ -13,6 +13,8 @@ pipeline {
         MASTERNODE="172.168.8.1"
         N1="172.168.8.2"
         N2="172.168.8.3"
+        //docker or containerd
+        CONTAINER_MANAGER = "docker"
     }
 
     stages {        
@@ -33,6 +35,7 @@ pipeline {
                 sh "CONFIG_FILE=kubespray/inventory/mycluster/hosts.yaml python3 kubespray/contrib/inventory_builder/inventory.py ${MASTERNODE} ${N1} ${N2}"
                 sh "curl https://raw.githubusercontent.com/Michal944/Jobs/master/hosts.yaml -o ${KUBESPRAY_DIR}/inventory/mycluster/hosts.yaml"
                 sh "cat ${KUBESPRAY_DIR}/inventory/mycluster/hosts.yaml"
+                sh "sed -i -e \'/container_manager:/s/containerd/${CONTAINER_MANAGER}/\' inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml"
             }
         }
         stage('Authorized keys') {
@@ -44,9 +47,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                        
                     sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${MASTERNODE}"
                     sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${N1}"
-                    sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${N2}"
-                    //sh "cat error.log"
-                    
+                    sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${N2}"                    
                 }
             }
             
