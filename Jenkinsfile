@@ -55,18 +55,20 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo '--------------Deploying....--------------'
-                sh "ansible-playbook -i kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root kubespray/cluster.yml"
+               // sh "ansible-playbook -i kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root kubespray/cluster.yml"
             }
         }
         stage('Test integration'){
-            sh "curl -LO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
-            sh "chmod +x ./kubectl"
-            withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                        
+            steps{
+                sh "curl -LO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+                sh "chmod +x ./kubectl"
+                withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                        
                     sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no ${USER}@${MASTERNODE}:/root/.kube/config ./config.yaml"
+                }
+                sh "sed -i \"s/127.0.0.1/${MASTERNODE}\" config.yaml"
+                sh "./kubectl --kubeconfig=\"config.yaml\" get nodes -o wide"
+                cleanWs()
             }
-            sh "sed -i \"s/127.0.0.1/${MASTERNODE}\" config.yaml"
-            sh "./kubectl --kubeconfig=\"config.yaml\" get nodes -o wide"
-            cleanWs()
         }
     }
     post {
