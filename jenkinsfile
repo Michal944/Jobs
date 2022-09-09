@@ -20,7 +20,6 @@ pipeline {
             steps {
                 
                 echo 'Preparing tools...'
-                sh 'echo $USER'
                 sh "apt-get install python3 python3-pip -y"
                 sh "git clone https://github.com/kubernetes-sigs/kubespray.git"
                 sh "pip install -r ${KUBESPRAY_DIR}/requirements-2.12.txt"
@@ -46,7 +45,7 @@ pipeline {
                 sh "chown coder.coder /tmp/authorized_keys"
                 withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                
         
-                    sh "sshpass -p ${PASSWORD} scp /tmp/authorized_keys ${USER}@${MASTERNODE}:/root/.ssh/"
+                    sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no /tmp/authorized_keys ${USER}@${MASTERNODE}:/root/.ssh/"
                     //sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${N1}"
                     //sh "sshpass -p ${PASSWORD} ssh-copy-id -f -i ${PATHKEY} ${USER}@${N2}"
                     //sh "cat error.log"
