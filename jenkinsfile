@@ -19,7 +19,7 @@ pipeline {
         stage('Prepare Tools') {
             steps {
                 
-                echo 'Preparing tools...'
+                echo '--------------Preparing tools...--------------'
                 sh "apt-get install python3 python3-pip -y"
                 sh "git clone https://github.com/kubernetes-sigs/kubespray.git"
                 sh "pip install -r ${KUBESPRAY_DIR}/requirements-2.12.txt"
@@ -28,25 +28,20 @@ pipeline {
         }
         stage('Build') {
             steps {
-                echo 'Build...'
+                echo '--------------Build...--------------'
                 sh "cp -rfp ${KUBESPRAY_DIR}/inventory/sample ${KUBESPRAY_DIR}/inventory/mycluster"
-                sh 'CONFIG_FILE=kubespray/inventory/mycluster/hosts.yaml python3 kubespray/contrib/inventory_builder/inventory.py 172.168.8.1 172.168.8.2 172.168.8.3'
+                sh "CONFIG_FILE=kubespray/inventory/mycluster/hosts.yaml python3 kubespray/contrib/inventory_builder/inventory.py ${MASTERNODE} ${N1} ${N2}"
                 sh "curl https://raw.githubusercontent.com/Michal944/Jobs/master/hosts.yaml -o ${KUBESPRAY_DIR}/inventory/mycluster/hosts.yaml"
                 sh "cat ${KUBESPRAY_DIR}/inventory/mycluster/hosts.yaml"
             }
         }
-        stage('Connect to Remote hosts') {
+        stage('Authorized keys') {
             steps {
-                echo "Connect to Remote hosts"
+                echo "--------------Authorized keys--------------"
                 sh "apt-get update && sudo apt-get install openssh-client -y"
                 sh "apt-get install sshpass -y"
                 sh "ssh-keygen -t rsa -f ${PATHKEY} -q -P \'\' "
-                sh "cp ${PATHKEY}.pub /tmp/authorized_keys"
-                sh "chown coder.coder /tmp/authorized_keys"
-                withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                
-        
-                    //sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no /tmp/authorized_keys ${USER}@${MASTERNODE}:/root/.ssh/"
-
+                withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                        
                     sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${MASTERNODE}"
                     sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${N1}"
                     sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${N2}"
@@ -60,7 +55,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                echo '--------------Deploying....--------------'
             }
         }
     }
