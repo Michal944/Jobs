@@ -57,6 +57,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo '--------------Deploying....--------------'
+                sh "ansible-playbook -i kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root cluster.yml"
             }
         }
     }
