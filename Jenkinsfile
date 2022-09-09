@@ -50,10 +50,7 @@ pipeline {
                     sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${N1}"
                     sh "sshpass -p ${PASSWORD} ssh-copy-id -f -o StrictHostKeyChecking=no -i ${PATHKEY} ${USER}@${N2}"                    
                 }
-            }
-            
-            
-       
+            }      
         }
         stage('Deploy') {
             steps {
@@ -61,23 +58,21 @@ pipeline {
                 sh "ansible-playbook -i kubespray/inventory/mycluster/hosts.yaml  --become --become-user=root kubespray/cluster.yml"
             }
         }
+        stage('Test integration'){
+            sh "curl -LO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+            sh "chmod +x ./kubectl"
+            withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                        
+                    sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no ${USER}@${MASTERNODE}:/root/.kube/config ./config.yaml"
+            }
+            sh "sed -i \"s/127.0.0.1/${MASTERNODE}\" config.yaml"
+            sh "./kubectl --kubeconfig=\"config.yaml\" get nodes -o wide"
+            cleanWs()
+        }
     }
     post {
         always {
             cleanWs()
             sh " rm -f ${PATHKEY} ${PATHKEY}.pub"
         }
-        succes {
-            sh "curl -LO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
-            sh "chmod +x ./kubectl"
-            withCredentials([usernamePassword(credentialsId: 'k8snodes', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]){                        
-                    sh "sshpass -p ${PASSWORD} scp -o StrictHostKeyChecking=no ${USER}@${MASTERNODE}:/root/.kube/config ./config.yaml"
-               
-                }
-            sh "sed -i \"s+https://127.0.0.1+cp.k8s\" config.yaml"
-            sh "./kubectl --kubeconfig=\"config.yaml\" get nodes -o wide"
-            cleanWs()
-        }
-
     }
 }
